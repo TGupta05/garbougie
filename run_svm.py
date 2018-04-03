@@ -14,6 +14,8 @@ def parseData(inputFile):
 		indeces = dict()
 		index = 0
 		for row in spamreader:
+                        if len(row) == 0:
+                            continue
 			if row[0] not in labels:
 				labels[row[0]] = index
 				indeces[index] = row[0]
@@ -60,3 +62,4 @@ def run_svm(inputData, new_data):
 
     X, Y, labels, indeces = parseData(inputData)
     train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)
+

@@ -9,10 +9,21 @@ import Adafruit_Python_MPR121.Adafruit_MPR121.MPR121 as MPR121
 import subprocess
 import extractFeatures
 import run_svm
+import csv
 
-SVM_DATA_PATH = r'TrainingData/dummy.csv'
+SVM_DATA_PATH = r'TrainingData/data.csv'
 AUDIO_DATA_PATH = r'WaveFiles/test.wav'
 LOAD_SENSOR_TRIES = 10
+
+def addData(data, dataFile):
+    label = sys.argv[1]
+    data = [label] + data
+    temp = ""
+    with open(dataFile, 'a+') as d:
+        temp = " ".join(data)
+        temp += '\n'
+        d.write(temp)
+
 
 def plotAudio (waveFile):
     spf = wave.open(waveFile, 'r')
@@ -45,8 +56,8 @@ def main():
     cap = MPR121.MPR121()
     if not cap.begin():
         print('Error initializing MPR121.  Check your wiring!')
-        sys.exit(1)
-    last_touched = cap.touched()
+#        sys.exit(1)
+#    last_touched = cap.touched()
     capacitive = 0;
 
     # get audio file
@@ -61,25 +72,21 @@ def main():
     while (count > 0):
         count -= 1
 
-        try:
-            # load sensing
-            loadValue += hx.get_weight(5)
-            hx.power_down()
-            hx.power_up()
+        # load sensing
+        loadValue += hx.get_weight(5)
+        hx.power_down()
+        hx.power_up()
 
-            # capacitive sensing
-            current_touched = cap.touched()
-            for i in range(12):
-                pin_bit = 1 << i
-                if ((current_touched & pin_bit) and (last_touched & pin_bit)):
-                    capacitive = 1
-            last_touched = current_touched
+        # capacitive sensing
+#        current_touched = cap.touched()
+#        for i in range(12):
+#            pin_bit = 1 << i
+#            if ((current_touched & pin_bit) and (last_touched & pin_bit)):
+#                capacitive = 1
+#        last_touched = current_touched
 
-            # wait
-            time.sleep(0.1)
-
-        except(KeyboardInterrupt, SystemExit):
-            cleanAndExit()
+        # wait
+        time.sleep(0.1)
 
     # print results to STDOUT
     loadValue /= LOAD_SENSOR_TRIES
@@ -96,10 +103,17 @@ def main():
 
     # run SVM on data
     args = [str(loadValue), str(capacitive)] + audioFeatures
+    for i in xrange(0, len(args)):
+        args[i] = str(args[i])
     run_svm.run_svm(SVM_DATA_PATH, args)
+
+    val = raw_input("should I save this data point? ")
+    if (val == 'yes'):
+        addData(args, SVM_DATA_PATH)
 
     # close sensors and exit
     cleanAndExit()
+
 
 if __name__=="__main__":
     main()
