@@ -11,6 +11,7 @@ import extractFeatures
 import run_svm
 
 SVM_DATA_PATH = r'TrainingData/dummy.csv'
+AUDIO_DATA_PATH = r'WaveFiles/test.wav'
 LOAD_SENSOR_TRIES = 10
 
 def plotAudio (waveFile):
@@ -49,9 +50,8 @@ def main():
     capacitive = 0;
 
     # get audio file
-    waveFile = sys.argv[1]
-    subprocess.call('arecord --device=hw:1,0 --format S16_LE --rate 44100 -c1 -d 3 ' + waveFile, shell=True)
-    audioFeatures = extractFeatures.extractFeatures(waveFile)
+    subprocess.call('arecord --device=hw:1,0 --format S16_LE --rate 44100 -c1 -d 3 ' + AUDIO_DATA_PATH, shell=True)
+    audioFeatures = extractFeatures.extractFeatures(AUDIO_DATA_PATH)
 
     # get values from load sensor and capacitive sensor
     count = LOAD_SENSOR_TRIES
@@ -91,7 +91,7 @@ def main():
     print("\tnumber of peaks = " + str(audioFeatures[1]))
     print("\tcentroid = " + str(audioFeatures[2]))
     print("\tspectrum = " + str(audioFeatures[3]))
-    plotAudio(waveFile)
+    plotAudio(AUDIO_DATA_PATH)
     print("\npredicting recycling category...\n")
 
     # run SVM on data
