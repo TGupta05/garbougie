@@ -40,8 +40,9 @@ def predict(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, in
 	for i in xrange(0, len(X)):
 		temp = X[i]	
 		distance = math.sqrt(math.pow((float(temp[0])-predict1)/20.0,2) + math.pow((float(temp[1])-predict2)/100,2) + math.pow((float(temp[2])-predict3)/5000,2) + math.pow((float(temp[3])-predict4)/20,2) + math.pow((float(temp[4])-predict5)/15,2) + math.pow((float(temp[5])-predict6)/600,2))
+
 		if len(knn) < NUMBER_NEIGHBORS:
-			knn[distance] = i 
+			knn[distance] = i
 		else:
 			maxDistance = -1
 			for dis in knn:
