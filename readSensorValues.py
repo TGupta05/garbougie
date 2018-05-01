@@ -87,7 +87,7 @@ def main():
     camera.capture(cameraPath)
 
     # initialize neural net model
-    model = run_NN.initializeNN()
+    # model = run_NN.initializeNN()
 
     while (True):
 
