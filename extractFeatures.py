@@ -19,34 +19,18 @@ def getMaxPeak(signal, frate):
 
 	w = np.fft.fft(data)
 	freqs = np.fft.fftfreq(len(w))
-	# print(freqs.min(), freqs.max())
 
 	idx = np.argmax(np.abs(w))
 	freq = freqs[idx]
 	freq_in_hertz = abs(freq * frate)
 
-	# spectrum, freq, t, im = pylab.specgram(signal, Fs=frate)
-
-	# print abs(freq)*frate
 	return freq
-
-	# transform = np.fft.fft(data)
-	# freqs = np.fft.fftfreq(len(transform))
-
-	# maxFreq = freqs.max()
-	# # print abs(maxFreq*frate)
-	# idx = np.argmax(np.abs(transform))
-	# freq = freqs[idx]
-	# freq_in_hertz = abs(freq*frate)
-	# # print freq_in_hertz
-	# return abs(maxFreq) * frate
 
 def getAmplitudePeak(signal):
 	indexes = scipy.signal.argrelextrema(
 		np.array(signal),
 		 comparator=np.greater,order=2
 	)
-	#print indexes[0]
 	return max(signal)
 
 def getNumPeak(signal):
@@ -66,7 +50,6 @@ def energy(signal):
 
 def stSpectralCentroidAndSpread(X, fs):
 	X = abs(np.fft.fft(X))
-	# X = X[0:nFFT]
 	X = X / len(X)
 	ind = (np.arange(1, len(X) + 1)) * (fs/(2.0 * len(X)))
 
@@ -85,8 +68,6 @@ def stSpectralCentroidAndSpread(X, fs):
 	C = C / (fs / 2.0)
 	S = S / (fs / 2.0)
 
-	# print C*fs
-	# print S*fs
 	return (C*fs, S*fs)
 
 
@@ -153,34 +134,19 @@ def highpass_filter(y, sr):
   return filtered_audio
 
 
-def extractFeatures(inputWave):
-	spf = wave.open(inputWave, 'r')
+def extractFeatures(fs, signal):
+	'''
+        spf = wave.open('WaveFiles/test.wav', 'r')
 	signal = spf.readframes(-1)
-	signal = np.fromstring(signal, 'int16')
 	fs = spf.getframerate()
+	signal = np.fromstring(signal, 'int16')
 	time = np.linspace(0,len(signal)/fs, num=len(signal))
+        '''
 	F,Y = audioFeatureExtraction.mtFeatureExtraction(signal, fs, 0.025*fs, 0.025*fs,  0.050*fs, 0.025*fs);
-
-	# print "Max peaks"
-	#spectral entropy
-	# fig = plt.figure(4)
-	# plt.plot(F[5,:])
-	# plt.xlabel('Frame no'); plt.ylabel('Test'); plt.show()
-	# print getMaxPeak(signal)
-	# print getNumPeak(signal)
-	# print energy(signal)
 
 	amplitudePeak = getAmplitudePeak(signal)
 	numPeaks = getNumPeak(F[5,:])
 	maxPeak = getMaxPeak(signal, fs)
 	centroid, spectrum = stSpectralCentroidAndSpread(signal, fs)
         return [amplitudePeak, numPeaks, centroid, spectrum]
-	#print "Amplitude Peak"
-	#print amplitudePeak
-	#print "Num peaks"
-	#print numPeaks
-	#print "Centroid"
-	#print centroid
-	#print "Spectrum"
-	#print spectrum
 

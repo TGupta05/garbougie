@@ -1,9 +1,6 @@
 import sys
-import argparse
 import numpy as np
 from PIL import Image
-import requests
-from io import BytesIO
 import matplotlib.pyplot as plt
 
 from keras.preprocessing import image
@@ -53,25 +50,10 @@ def plot_preds(image, preds):
   plt.show()
 
 
-if __name__=="__main__":
-  a = argparse.ArgumentParser()
-  a.add_argument('-i', "--image", help="path to image")
-  a.add_argument('-u', "--image_url", help="url to image")
-  a.add_argument('-m', "--model")
-  args = a.parse_args()
-
-  if args.image is None and args.image_url is None:
-    a.print_help()
-    sys.exit(1)
-
-  model = load_model(args.model)
-  if args.image is not None:
-    img = Image.open(args.image)
+def predict_class(img):
+    model = load_model('inceptionv3-ft.model')
     preds = predict(model, img, target_size)
+    return labels[np.argmax(preds)]
 
-  if args.image_url is not None:
-    response = requests.get(args.image_url)
-    img = Image.open(BytesIO(response.content))
-    preds = predict(model, img, target_size)
 
-  print(labels[np.argmax(preds)])
+predict_class('coke.png')

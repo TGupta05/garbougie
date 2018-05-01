@@ -38,10 +38,10 @@ def parseData(inputFile):
 def predict(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, indeces):
 	knn = dict()
 	for i in xrange(0, len(X)):
-		temp = X[i]	
+		temp = X[i]
 		distance = math.sqrt(math.pow((float(temp[0])-predict1)/60.0,2) + math.pow((float(temp[1])-predict2)/2,2) + math.pow((float(temp[2])-predict3)/31000,2) + math.pow((float(temp[3])-predict4)/4,2) + math.pow((float(temp[4])-predict5),2) + math.pow((float(temp[5])-predict6),2))
 		if len(knn) < NUMBER_NEIGHBORS:
-			knn[distance] = i 
+			knn[distance] = i
 		else:
 			maxDistance = -1
 			for dis in knn:
@@ -50,7 +50,6 @@ def predict(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, in
 			if distance < maxDistance:
 				knn.pop(maxDistance)
 				knn[distance] = i
-			print "here"
 
 	zeroCount = 0
 	oneCount = 0

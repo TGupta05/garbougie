@@ -36,8 +36,6 @@ def parseData(inputFile):
 def train(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, indeces):
 	clf = RandomForestClassifier(n_jobs=2, random_state=0)
 	clf.fit(X, Y)
-	print X
-	print len(X[0])
 	test = [[predict1, predict2, predict3, predict4, predict5, predict6]]
 	prediction = clf.predict(test)
 	print("Random Forst prediction is : " + indeces[prediction[0]])
