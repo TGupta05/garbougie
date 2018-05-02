@@ -13,9 +13,11 @@ import subprocess
 import extractFeatures
 import run_svm
 import run_knn
+import run_log
 import run_randomforest
 import run_NN
 import csv
+
 
 TRINITY_DATA_PATH = r'TrainingData/data.csv'
 AUDIO_DATA_PATH = r'WaveFiles/test.wav'
@@ -121,6 +123,7 @@ def main():
 
                 # load sensing
                 loadValue += hx.get_weight(5)
+                print(loadValue)
                 hx.power_down()
                 hx.power_up()
 
@@ -156,6 +159,7 @@ def main():
             run_svm.run_svm(TRINITY_DATA_PATH, args)
             run_knn.run_knn(TRINITY_DATA_PATH, args)
             run_randomforest.run_randomforest(TRINITY_DATA_PATH, args)
+            run_log.run_log(TRINITY_DATA_PATH, args)
             #run_NN.predict(model, imgName)
 
             # save data
@@ -169,11 +173,13 @@ def main():
             GPIO.cleanup()
             sys.exit()
 
+        '''
         except:
             print "\nrip something went wrong!"
             camera.close()
             GPIO.cleanup()
             sys.exit()
+        '''
 
 
 if __name__=="__main__":
