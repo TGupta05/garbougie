@@ -41,7 +41,9 @@ def train(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, inde
 
 	test = [predict1, predict2, predict3, predict4, predict5, predict6]
 	prediction = classifier.predict([test])
-        print("Logistic prediction is : " + indeces[prediction[0]])
+        probs = classifier.predict_proba([test])
+        print("Logistic prediction is... " + indeces[prediction[0]])
+        return indeces, probs
 
 def plot_contours(ax, clf, xx, yy, **params):
 
@@ -59,4 +61,4 @@ def run_log(inputData, new_data):
     predict6 = new_data[5]
 
     X, Y, labels, indeces = parseData(inputData)
-    train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)
+    return train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)

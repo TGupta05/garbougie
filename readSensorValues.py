@@ -123,7 +123,6 @@ def main():
 
                 # load sensing
                 loadValue += hx.get_weight(5)
-                print(loadValue)
                 hx.power_down()
                 hx.power_up()
 
@@ -156,11 +155,42 @@ def main():
                 args[i] = str(args[i])
 
             # run classifiers on data
-            run_svm.run_svm(TRINITY_DATA_PATH, args)
-            run_knn.run_knn(TRINITY_DATA_PATH, args)
-            run_randomforest.run_randomforest(TRINITY_DATA_PATH, args)
-            run_log.run_log(TRINITY_DATA_PATH, args)
-            #run_NN.predict(model, imgName)
+            # 0 = compost
+            # 1 = metal
+            # 2 = plastic
+            # if highest probability is less than 50% then predict trash
+
+            svm_indicies, svm_preds = run_svm.run_svm(TRINITY_DATA_PATH, args)
+            knn_indicies, knn_preds = run_knn.run_knn(TRINITY_DATA_PATH, args)
+            rf_indicies, rf_preds = run_randomforest.run_randomforest(TRINITY_DATA_PATH, args)
+            log_indicies, log_preds = run_log.run_log(TRINITY_DATA_PATH, args)
+            # img_indicies, img_preds = run_NN.predict(model, imgName)
+
+            # max_prob_NN = max(img_preds)
+            # max_arg_NN = img_indicies[np.argmax(img_preds)]
+            max_prob_NN = 0.0
+            max_arg_NN = 'trash'
+
+            max_prob_knn = max(knn_preds)
+            max_arg_knn = knn_indicies[np.argmax(knn_preds)]
+
+            if (max_prob_knn <= 0.5):
+                max_arg_knn = 'trash'
+            if (max_prob_NN <= 0.5):
+                max_arg_NN = 'trash'
+
+            if (max_arg_knn == 'trash'):
+                final_pred = max_arg_NN
+            if (max_arg_NN == 'trash'):
+                final_pred = max_arg_knn
+            if (max_arg_knn != 'trash' and max_arg_NN != 'trash'):
+                if (max_prob_knn > max_prob_NN):
+                    final_pred = max_arg_knn
+                else:
+                    final_pred = max_arg_NN
+
+            print("FINAL PREDICTION IS... " + final_pred)
+
 
             # save data
             val = raw_input("should I save this data point? ")

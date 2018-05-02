@@ -21,8 +21,14 @@ def predict(model, img):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     preds = model.predict(x)
-    # return preds[0]
+
+    compressed_preds = [0]*3
+    compressed_preds[0] = preds[0]+preds[1]+preds[6]+preds[8]
+    compressed_preds[1] = preds[2]+preds[3]+preds[4]+preds[5]
+    compressed_preds[2] = preds[7]+preds[9]+preds[10]+preds[11]
+
     print("ImageNet prediction is : " + labels[np.argmax(pred)])
+    return {0:"compost", 1:"metal", 2:"plastic"}, compressed_preds
 
 
 def plot_preds(image, preds):

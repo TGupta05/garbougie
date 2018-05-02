@@ -36,14 +36,16 @@ def parseData(inputFile):
 
 def train(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, indeces):
 	clf = svm.SVC(C=1.0, kernel='rbf', degree=3, gamma=1.0, coef0=0.0, shrinking=True,
-		probability=False,tol=0.001, cache_size=200,
+		probability=True,tol=0.001, cache_size=200,
 		class_weight=None, verbose=False,
 		max_iter=-1, random_state=None)
 	clf.fit(X, Y)
 
 	test = [predict1, predict2, predict3, predict4, predict5, predict6]
 	prediction = clf.predict([test])
-        print("SVM prediction is : " + indeces[prediction[0]])
+        probs = clf.predict_proba([test])
+        print("SVM prediction is... " + indeces[prediction[0]])
+        return indeces, probs
 
 def plot_contours(ax, clf, xx, yy, **params):
 
@@ -61,5 +63,5 @@ def run_svm(inputData, new_data):
     predict6 = new_data[5]
 
     X, Y, labels, indeces = parseData(inputData)
-    train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)
+    return train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)
 
