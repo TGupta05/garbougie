@@ -1,4 +1,4 @@
-from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 import os, math, sys, numpy, csv
 
 
@@ -35,16 +35,14 @@ def parseData(inputFile):
 		return X, Y, labels, indeces
 
 def train(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, indeces):
-	clf = svm.SVC(C=1.0, kernel='rbf', degree=3, gamma=1.0, coef0=0.0, shrinking=True,
-		probability=True,tol=0.001, cache_size=200,
-		class_weight=None, verbose=False,
-		max_iter=-1, random_state=None)
-	clf.fit(X, Y)
+	C = 1.0;
+	classifier = LogisticRegression(C=C,solver='lbfgs',multi_class='multinomial')
+	classifier.fit(X, Y)
 
 	test = [predict1, predict2, predict3, predict4, predict5, predict6]
-	prediction = clf.predict([test])
-        probs = clf.predict_proba([test])
-        print("SVM prediction is... " + indeces[prediction[0]])
+	prediction = classifier.predict([test])
+        probs = classifier.predict_proba([test])
+        print("Logistic prediction is... " + indeces[prediction[0]])
         return indeces, probs
 
 def plot_contours(ax, clf, xx, yy, **params):
@@ -54,7 +52,7 @@ def plot_contours(ax, clf, xx, yy, **params):
     out = ax.contourf(xx, yy, Z, **params)
     return out
 
-def run_svm(inputData, new_data):
+def run_log(inputData, new_data):
     predict1 = new_data[0]
     predict2 = new_data[1]
     predict3 = new_data[2]
@@ -64,4 +62,3 @@ def run_svm(inputData, new_data):
 
     X, Y, labels, indeces = parseData(inputData)
     return train(X, Y, float(predict1), float(predict2), float(predict3), float(predict4), float(predict5), float(predict6), indeces)
-
