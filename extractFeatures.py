@@ -1,7 +1,7 @@
 from pyAudioAnalysis import audioBasicIO
 from pyAudioAnalysis import audioFeatureExtraction
 import matplotlib.pyplot as plt
-
+import librosa
 import numpy as np
 import scipy.signal
 import wave
@@ -47,6 +47,9 @@ def energy(signal):
 	"""Computes signal energy of frame"""
 	signal = np.asarray(signal)
 	return np.sum(signal ** 2) / np.float64(len(signal))
+
+def mean
+
 
 def stSpectralCentroidAndSpread(X, fs):
 	X = abs(np.fft.fft(X))
@@ -133,6 +136,13 @@ def highpass_filter(y, sr):
   filtered_audio = signal.filtfilt(filter_coefs, [1], y)
   return filtered_audio
 
+def getMeanMFCC(features)
+	final = 0
+	for i in xrange(9,22):
+		cur_mfcc = F[i,:]
+		cur_mean = np.mean(cur_mfcc)
+		final += cur_mean
+	return (final/(22-9))
 
 def extractFeatures(fs, signal):
 	'''
@@ -143,10 +153,10 @@ def extractFeatures(fs, signal):
 	time = np.linspace(0,len(signal)/fs, num=len(signal))
         '''
 	F,Y = audioFeatureExtraction.mtFeatureExtraction(signal, fs, 0.025*fs, 0.025*fs,  0.050*fs, 0.025*fs);
-
+	meanMFCC = getMeanMFCC(F)
 	amplitudePeak = getAmplitudePeak(signal)
 	numPeaks = getNumPeak(F[5,:])
 	maxPeak = getMaxPeak(signal, fs)
 	centroid, spectrum = stSpectralCentroidAndSpread(signal, fs)
-        return [amplitudePeak, numPeaks, centroid, spectrum]
+        return [amplitudePeak, numPeaks, centroid, spectrum, meanMFCC]
 
