@@ -17,6 +17,7 @@ import run_log
 import run_randomforest
 import run_NN
 import csv
+from PIL import Image
 
 
 TRINITY_DATA_PATH = r'TrainingData/data.csv'
@@ -83,10 +84,6 @@ def main():
 
     # initialize camera
     camera = PiCamera()
-    timeStamp = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
-    timeStamp = 'temp'
-    cameraPath = IMAGE_DATA_PATH + timeStamp + '.jpg'
-    camera.capture(cameraPath)
 
     # initialize neural net model
     # model = run_NN.initializeNN()
@@ -111,7 +108,9 @@ def main():
             timeStamp = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
             timeStamp = 'temp'
             imgName = IMAGE_DATA_PATH + timeStamp + '.jpg'
-            camera.capture(imgName)
+            # camera.start_preview()
+            # camera.capture(imgName)
+            # camera.stop_preview()
 
             # get values from load sensor and capacitive sensor
             count = LOAD_SENSOR_TRIES
@@ -146,6 +145,7 @@ def main():
             print("\tnumber of peaks = " + str(audioFeatures[1]))
             print("\tcentroid = " + str(audioFeatures[2]))
             print("\tspectrum = " + str(audioFeatures[3]))
+            print("\tMel-Freq Cep Coeff = " + str(audioFeatures[4]))
             plotAudio(fs, signal)
             print("predicting recycling category...")
 
@@ -171,14 +171,36 @@ def main():
             max_prob_NN = 0.0
             max_arg_NN = 'trash'
 
+            max_prob_svm = max(svm_preds)
+            max_arg_svm = svm_indicies[np.argmax(svm_preds)]
+
             max_prob_knn = max(knn_preds)
             max_arg_knn = knn_indicies[np.argmax(knn_preds)]
 
-            if (max_prob_knn <= 0.5):
-                max_arg_knn = 'trash'
-            if (max_prob_NN <= 0.5):
-                max_arg_NN = 'trash'
+            max_prob_rf = max(rf_preds)
+            max_arg_rf = rf_indicies[np.argmax(rf_preds)]
 
+            max_prob_log = max(log_preds)
+            max_arg_log = log_indicies[np.argmax(log_preds)]
+
+            if (max_prob_svm <= 0.45):
+                max_arg_svm = 'trash'
+            if (max_prob_knn <= 0.45):
+                max_arg_knn = 'trash'
+            if (max_prob_rf <= 0.45):
+                max_arg_rf = 'trash'
+            if (max_prob_log <= 0.45):
+                max_arg_log = 'trash'
+            # if (max_prob_NN <= 0.45):
+            #     max_arg_NN = 'trash'
+
+            print("SVM prediction is..."+max_arg_svm)
+            print("KNN prediction is..."+max_arg_knn)
+            print("Random Forest prediction is..."+max_arg_rf)
+            print("Logistic Regression prediction is..."+max_arg_log)
+            # print("NN prediction is..."+max_arg_NN)
+
+            '''
             if (max_arg_knn == 'trash'):
                 final_pred = max_arg_NN
             if (max_arg_NN == 'trash'):
@@ -191,17 +213,20 @@ def main():
 
             print("FINAL PREDICTION IS... " + final_pred)
 
-
             # save data
             val = raw_input("should I save this data point? ")
             if (val == 'yes'):
                 val = raw_input("what is the category of this point? ")
                 addData(val,args, TRINITY_DATA_PATH)
+            '''
 
         except (KeyboardInterrupt, SystemExit):
             camera.close()
             GPIO.cleanup()
             sys.exit()
+
+        except:
+            continue
 
         '''
         except:
