@@ -144,6 +144,22 @@ def getMeanMFCC(features)
 		final += cur_mean
 	return (final/(22-9))
 
+
+def stSpectralRollOff(X, c, fs):
+    """Computes spectral roll-off"""
+    totalEnergy = numpy.sum(X ** 2)
+    fftLength = len(X)
+    Thres = c*totalEnergy
+    # Ffind the spectral rolloff as the frequency position where the respective spectral energy is equal to c*totalEnergy
+    CumSum = numpy.cumsum(X ** 2) + eps
+    [a, ] = numpy.nonzero(CumSum > Thres)
+    if len(a) > 0:
+        mC = numpy.float64(a[0]) / (float(fftLength))
+    else:
+        mC = 0.0
+    return (mC)
+
+
 def extractFeatures(fs, signal):
 	'''
         spf = wave.open('WaveFiles/test.wav', 'r')
@@ -158,5 +174,8 @@ def extractFeatures(fs, signal):
 	numPeaks = getNumPeak(F[5,:])
 	maxPeak = getMaxPeak(signal, fs)
 	centroid, spectrum = stSpectralCentroidAndSpread(signal, fs)
+	rolloff = stSpectralRollOff(signal, 0.85, fs)
+	maxFlux = np.amax(F[6])
+	avgFlux = np.mean(F[6])
         return [amplitudePeak, numPeaks, centroid, spectrum, meanMFCC]
 
