@@ -108,9 +108,9 @@ def main():
             timeStamp = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
             timeStamp = 'temp'
             imgName = IMAGE_DATA_PATH + timeStamp + '.jpg'
-            # camera.start_preview()
-            # camera.capture(imgName)
-            # camera.stop_preview()
+            camera.start_preview()
+            camera.capture(imgName)
+            camera.stop_preview()
 
             # get values from load sensor and capacitive sensor
             count = LOAD_SENSOR_TRIES
@@ -145,7 +145,12 @@ def main():
             print("\tnumber of peaks = " + str(audioFeatures[1]))
             print("\tcentroid = " + str(audioFeatures[2]))
             print("\tspectrum = " + str(audioFeatures[3]))
+            '''
             print("\tMel-Freq Cep Coeff = " + str(audioFeatures[4]))
+            print("\tRolloff Point = " + str(audioFeatures[5]))
+            print("\tMax Spectral Flux = " + str(audioFeatures[6]))
+            print("\tAvg Spectral Flux = " + str(audioFeatures[7]))
+            '''
             plotAudio(fs, signal)
             print("predicting recycling category...")
 
@@ -224,9 +229,6 @@ def main():
             camera.close()
             GPIO.cleanup()
             sys.exit()
-
-        except:
-            continue
 
         '''
         except:

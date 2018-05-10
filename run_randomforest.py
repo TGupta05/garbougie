@@ -39,8 +39,7 @@ def train(X, Y, predict1, predict2, predict3, predict4, predict5, predict6, inde
 	test = [[predict1, predict2, predict3, predict4, predict5, predict6]]
 	prediction = clf.predict(test)
         probs = clf.predict_proba(test)
-	print("Random Forst prediction is... " + indeces[prediction[0]])
-        return indeces, probs
+        return indeces, probs[0]
 
 def plot_contours(ax, clf, xx, yy, **params):
 

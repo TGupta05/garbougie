@@ -13,7 +13,10 @@ labels = ("apple", "banana", "beverage_can", "bottle_cap", "food_can", "jar_lid"
 
 
 def predict(model, img):
+
     labels = ("apple", "banana", "beverage_can", "bottle_cap", "food_can", "jar_lid", "lemon", "milk_carton", "orange", "takeout_container", "utensil", "water_bottle")
+
+    img = Image.open(img)
     if img.size != target_size:
         img = img.resize(target_size)
 
@@ -21,20 +24,20 @@ def predict(model, img):
     x = np.expand_dims(x, axis=0)
     x = preprocess_input(x)
     preds = model.predict(x)
+    preds = preds[0]
 
     compressed_preds = [0]*3
     compressed_preds[0] = preds[0]+preds[1]+preds[6]+preds[8]
     compressed_preds[1] = preds[2]+preds[3]+preds[4]+preds[5]
     compressed_preds[2] = preds[7]+preds[9]+preds[10]+preds[11]
 
-    print("ImageNet prediction is : " + labels[np.argmax(pred)])
     return {0:"compost", 1:"metal", 2:"plastic"}, compressed_preds
 
 
 def plot_preds(image, preds):
     """Displays image and the top-n predicted probabilities in a bar graph
     Args:
-    image: PIL image
+    image: image file
     preds: list of predicted labels and their probabilities
     """
     plt.imshow(image)
@@ -52,6 +55,3 @@ def plot_preds(image, preds):
 
 def initializeNN():
     return load_model('inceptionv3-ft.model')
-
-
-
