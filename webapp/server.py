@@ -15,13 +15,50 @@ rueda = dict()
 class Looping(object):
 	def __init__(self):
 		helv100 = tkFont.Font(family='Helvetica',size=100, weight='bold')
+		self.server = socket.socket()
+		host = socket.gethostname() 
+		print host
+		port = 12342
+		self.server.bind((host, port)) 
 		self.B_start = Tkinter.Button(top, text ="Start",font=helv100, height = 5, bd = 0, command = self.yay)
 		self.B_start.pack(fill=BOTH, expand=1)
 		# self.B_stop = Tkinter.Button(top, text ="Stop",font=helv100, command = self.button_stop)
 		# self.B_stop.pack(fill=BOTH, expand=1)
 		self.isRunning = True 
 
-	def back2(self):
+	def backPlastic(self):
+		self.client.send(bytes("plastic"))
+		self.w.destroy()
+		self.y.destroy()
+		self.plastic.destroy()
+		self.compost.destroy()
+		self.metal.destroy()
+		self.trash.destroy()
+		self.yay()
+
+	def backCompost(self):
+		self.client.send(bytes("compost"))
+		self.w.destroy()
+		self.y.destroy()
+		self.plastic.destroy()
+		self.compost.destroy()
+		self.metal.destroy()
+		self.trash.destroy()
+		self.yay()
+
+	def backMetal(self):
+		self.client.send(bytes("metal"))
+
+		self.w.destroy()
+		self.y.destroy()
+		self.plastic.destroy()
+		self.compost.destroy()
+		self.metal.destroy()
+		self.trash.destroy()
+		self.yay()
+
+	def backTrash(self):
+		self.client.send(bytes("trash"))
 		self.w.destroy()
 		self.y.destroy()
 		self.plastic.destroy()
@@ -40,17 +77,14 @@ class Looping(object):
 		self.show.pack()
 		top.update()
 
-		self.server = socket.socket()
-		host = socket.gethostname() 
-		port = 12342
-		self.server.bind((host, port))        # Bind to the port
+		       # Bind to the port
 		self.server.listen(5) 
 		while True:
 			print "waiting"
-			client, addr = self.server.accept()     # Establish connection with client
+			self.client, addr = self.server.accept()     # Establish connection with client
 			break
 		while self.isRunning == True:
-			recived = client.recv(60)#number of bytes recived
+			recived = self.client.recv(60)#number of bytes recived
 			print recived
 			break
 		else:
@@ -65,10 +99,10 @@ class Looping(object):
 		self.y = Tkinter.Label(top, text = "What is the real category? ", font =helv50)
 		self.w.pack()
 		self.y.pack()
-		self.plastic = Tkinter.Button(top, text ="plastic",font=helv10 , command = self.back2)
-		self.compost = Tkinter.Button(top, text ="compost",font=helv10,   command = self.back2)
-		self.metal = Tkinter.Button(top, text ="metal",font=helv10, command = self.back2)
-		self.trash = Tkinter.Button(top, text ="trash",font=helv10,  command = self.back2)
+		self.plastic = Tkinter.Button(top, text ="plastic",font=helv10 , command = self.backPlastic)
+		self.compost = Tkinter.Button(top, text ="compost",font=helv10,   command = self.backCompost)
+		self.metal = Tkinter.Button(top, text ="metal",font=helv10, command = self.backMetal)
+		self.trash = Tkinter.Button(top, text ="trash",font=helv10,  command = self.backTrash)
 		self.plastic.pack()
 		self.compost.pack()
 		self.metal.pack()

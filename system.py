@@ -11,16 +11,13 @@ import wave
 import Adafruit_Python_MPR121.Adafruit_MPR121.MPR121 as MPR121
 import subprocess
 import extractFeatures
-import run_svm
-import run_knn
-import run_log
-import run_randomforest
-import run_NN
+import run_classifiers
 import csv
 from PIL import Image
 
 
 TRINITY_DATA_PATH = r'TrainingData/data.csv'
+TRINITY_DATA_PATH_SAVE = r'TrainingData/new_data.csv'
 IMAGE_DATA_PATH = r'ImageData/'
 SENSOR_TRIES = 10
 
@@ -84,11 +81,19 @@ def classify(signal, hx, cap, camera, model):
 
         # run classifiers on data
         print("running classifiers")
+        knn_output, log_output, svm_output, rf_output = run_classifiers.run_classifiers(TRINITY_DATA_PATH, args)
+        svm_indicies, svm_preds = svm_output
+        knn_indicies, knn_preds = knn_output
+        rf_indicies, rf_preds = rf_output
+        log_indicies, log_preds = log_output
+
+        '''
         svm_indicies, svm_preds = run_svm.run_svm(TRINITY_DATA_PATH, args)
         knn_indicies, knn_preds = run_knn.run_knn(TRINITY_DATA_PATH, args)
         rf_indicies, rf_preds = run_randomforest.run_randomforest(TRINITY_DATA_PATH, args)
         log_indicies, log_preds = run_log.run_log(TRINITY_DATA_PATH, args)
         #img_indicies, img_preds = run_NN.predict(model, imgName)
+        '''
 
         max_prob_svm = max(svm_preds)
         max_arg_svm = svm_indicies[np.argmax(svm_preds)]
@@ -116,6 +121,8 @@ def classify(signal, hx, cap, camera, model):
         print("Random Forest prediction is..."+max_arg_rf)
         print("Logistic Regression prediction is..."+max_arg_log)
         print("Final prediction is..."+final_pred)
+
+        addData(recieved, args, TRINITY_DATA_PATH_SAVE)
 
     except (KeyboardInterrupt, SystemExit):
         sys.exit()
